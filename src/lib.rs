@@ -22,6 +22,15 @@ impl Ollama {
         }
     }
 
+    pub fn new_with_client(host: String, port: u16, reqwest_client: reqwest::Client) -> Self {
+        Self {
+            host,
+            port,
+            reqwest_client,
+            ..Default::default()
+        }
+    }
+
     /// Returns the http URI of the Ollama instance
     pub fn uri(&self) -> String {
         format!("{}:{}", self.host, self.port)
