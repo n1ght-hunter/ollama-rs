@@ -7,33 +7,39 @@ pub mod models;
 #[derive(Debug, Clone)]
 pub struct Ollama {
     pub(crate) host: String,
-    pub(crate) port: u16,
+    pub(crate) port: Option<u16>,
     pub(crate) reqwest_client: reqwest::Client,
     #[cfg(feature = "chat-history")]
     pub(crate) messages_history: Option<history::MessagesHistory>,
 }
 
 impl Ollama {
-    pub fn new(host: String, port: u16) -> Self {
+    pub fn new(host: String) -> Self {
         Self {
             host,
-            port,
             ..Default::default()
         }
     }
 
-    pub fn new_with_client(host: String, port: u16, reqwest_client: reqwest::Client) -> Self {
+    pub fn new_with_client(host: String, reqwest_client: reqwest::Client) -> Self {
         Self {
             host,
-            port,
             reqwest_client,
             ..Default::default()
         }
     }
 
+    pub fn with_port(mut self, port: u16) -> Self {
+        self.port = Some(port);
+        self
+    }
+
     /// Returns the http URI of the Ollama instance
     pub fn uri(&self) -> String {
-        format!("{}:{}", self.host, self.port)
+        match self.port {
+            Some(port) => format!("{}:{}", self.host, port),
+            None => self.host.clone(),
+        }
     }
 }
 
@@ -42,7 +48,7 @@ impl Default for Ollama {
     fn default() -> Self {
         Self {
             host: "http://127.0.0.1".to_string(),
-            port: 11434,
+            port: Some(11434),
             reqwest_client: reqwest::Client::new(),
             #[cfg(feature = "chat-history")]
             messages_history: None,

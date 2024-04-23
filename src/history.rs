@@ -59,10 +59,9 @@ impl Ollama {
     }
 
     /// Create new instance with chat history
-    pub fn new_with_history(host: String, port: u16, messages_number_limit: u16) -> Self {
+    pub fn new_with_history(host: String, messages_number_limit: u16) -> Self {
         Self {
             host,
-            port,
             messages_history: Some(MessagesHistory::new(messages_number_limit)),
             ..Default::default()
         }
